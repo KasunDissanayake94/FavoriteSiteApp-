@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,8 +23,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private FavouritesAdapter mFavAdapter;
-    private FavouritesViewModel mFavViewModel;
+    private UrlSiteAdapter mFavAdapter;
+    private UrlViewModel mUrlViewModel;
 
 
     @Override
@@ -36,10 +35,10 @@ public class MainActivity extends AppCompatActivity {
         ListView listView = findViewById(R.id.listView);
         FloatingActionButton fab = findViewById(R.id.fab);
 
-        mFavViewModel = ViewModelProviders.of(this).get(FavouritesViewModel.class);
+        mUrlViewModel = ViewModelProviders.of(this).get(UrlViewModel.class);
 
-        List<Favourites> favourites = mFavViewModel.getFavs();
-        mFavAdapter = new FavouritesAdapter(this, R.layout.list_item_row, favourites);
+        List<UrlSites> urlSites = mUrlViewModel.getFavs();
+        mFavAdapter = new UrlSiteAdapter(this, R.layout.list_item_row, urlSites);
         listView.setAdapter(mFavAdapter);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -56,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                                 String url = String.valueOf(inUrl.getText());
                                 long date = (new Date()).getTime();
                                 // VM AND VIEW
-                                mFavAdapter.add(mFavViewModel.addFav(url, date));
+                                mFavAdapter.add(mUrlViewModel.addFav(url, date));
                             }
                         })
                         .setNegativeButton("Cancel", null)
@@ -69,28 +68,28 @@ public class MainActivity extends AppCompatActivity {
     public void deleteFav(View view) {
         View parent = (View) view.getParent();
         int position = (int) parent.getTag(R.id.POS);
-        Favourites favourites = mFavAdapter.getItem(position);
+        UrlSites urlSites = mFavAdapter.getItem(position);
         // VM
-        mFavViewModel.removeFav(favourites.mId);
+        mUrlViewModel.removeFav(urlSites.mId);
         // VIEW
-        mFavAdapter.remove(favourites);
+        mFavAdapter.remove(urlSites);
     }
 
-    public class FavouritesAdapter extends ArrayAdapter<Favourites> {
+    public class UrlSiteAdapter extends ArrayAdapter<UrlSites> {
 
         private class ViewHolder {
             TextView tvUrl;
             TextView tvDate;
         }
 
-        public FavouritesAdapter(Context context, int layoutResourceId, List<Favourites> todos) {
+        public UrlSiteAdapter(Context context, int layoutResourceId, List<UrlSites> todos) {
             super(context, layoutResourceId, todos);
         }
 
         @Override
         @NonNull
         public View getView(int position, View convertView, ViewGroup parent) {
-            Favourites favourites = getItem(position);
+            UrlSites favourites = getItem(position);
             ViewHolder viewHolder;
             if (convertView == null) {
                 viewHolder = new ViewHolder();

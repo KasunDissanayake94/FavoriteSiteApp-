@@ -12,38 +12,34 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class FavouritesViewModel extends AndroidViewModel {
+public class UrlViewModel extends AndroidViewModel {
 
     private FavouritesDBHelper mFavHelper;
-    private ArrayList<Favourites> mFavs;
+    private ArrayList<UrlSites> mFavs;
 
-    public FavouritesViewModel(Application application) {
+    public UrlViewModel(Application application) {
         super(application);
         mFavHelper = new FavouritesDBHelper(application);
     }
 
-    public List<Favourites> getFavs() {
+    public List<UrlSites> getFavs() {
         if (mFavs == null) {
             mFavs = new ArrayList<>();
 
-            createDummyList();
+            addManualList();
             loadFavs();
         }
-        ArrayList<Favourites> clonedFavs = new ArrayList<>(mFavs.size());
+        ArrayList<UrlSites> clonedFavs = new ArrayList<>(mFavs.size());
         for (int i = 0; i < mFavs.size(); i++) {
-            clonedFavs.add(new Favourites(mFavs.get(i)));
+            clonedFavs.add(new UrlSites(mFavs.get(i)));
         }
         return clonedFavs;
     }
 
-    public void createDummyList() {
+    public void addManualList() {
 
-        addFav("https://www.journaldev.com", (new Date()).getTime());
-        addFav("https://www.medium.com", (new Date()).getTime());
-        addFav("https://www.reddit.com", (new Date()).getTime());
-        addFav("https://www.github.com", (new Date()).getTime());
-        addFav("https://www.hackerrank.com", (new Date()).getTime());
-        addFav("https://www.developers.android.com", (new Date()).getTime());
+        addFav("https://www.google.com", (new Date()).getTime());
+
     }
 
     public void loadFavs() {
@@ -62,15 +58,13 @@ public class FavouritesViewModel extends AndroidViewModel {
             int idxId = cursor.getColumnIndex(DbSettings.DBEntry._ID);
             int idxUrl = cursor.getColumnIndex(DbSettings.DBEntry.COL_FAV_URL);
             int idxDate = cursor.getColumnIndex(DbSettings.DBEntry.COL_FAV_DATE);
-            mFavs.add(new Favourites(cursor.getLong(idxId), cursor.getString(idxUrl), cursor.getLong(idxDate)));
+            mFavs.add(new UrlSites(cursor.getLong(idxId), cursor.getString(idxUrl), cursor.getLong(idxDate)));
         }
         cursor.close();
         db.close();
     }
 
-    public Favourites addFav(String url, long date) {
-
-        Log.d("API123", "addFav " + url);
+    public UrlSites addFav(String url, long date) {
 
         SQLiteDatabase db = mFavHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -81,9 +75,9 @@ public class FavouritesViewModel extends AndroidViewModel {
                 values,
                 SQLiteDatabase.CONFLICT_REPLACE);
         db.close();
-        Favourites fav = new Favourites(id, url, date);
+        UrlSites fav = new UrlSites(id, url, date);
         mFavs.add(fav);
-        return new Favourites(fav);
+        return new UrlSites(fav);
     }
 
     public void removeFav(long id) {
@@ -97,7 +91,7 @@ public class FavouritesViewModel extends AndroidViewModel {
 
         int index = -1;
         for (int i = 0; i < mFavs.size(); i++) {
-            Favourites favourites = mFavs.get(i);
+            UrlSites favourites = mFavs.get(i);
             if (favourites.mId == id) {
                 index = i;
             }
